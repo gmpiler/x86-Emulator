@@ -29,7 +29,7 @@ free_emu(Emulator *emu)
 static void
 dump_registers(Emulator *emu)
 {
-    for(int i = 0; i < REGISTERS_COUNT;)
+    for(int i = 0; i < REGISTERS_COUNT; i++)
         printf("%s = %08x\n", registers_name[i], emu->registers[i]);
     printf("EIP = %08x\n", emu->eip);
 }
@@ -58,10 +58,10 @@ get_code32(Emulator *emu, int index)
 void
 mov_r32_imm32(Emulator *emu)
 {
-    uint8_t reg = get_code8(emu, 0) - 0x88;
+    uint8_t reg = get_code8(emu, 0) - 0xB8;
     uint32_t value = get_code32(emu, 1);
     emu->registers[reg] = value;
-    emu->eip += 8;
+    emu->eip += 5;
 }
 
 void
@@ -79,7 +79,7 @@ init_instructions(void)
 {
     memset(instructions, 0, sizeof(instructions));
     for(int i = 0; i < 8; i++)
-        instructions[0x88 + i] = mov_r32_imm32;
+        instructions[0xB8 + i] = mov_r32_imm32;
     instructions[0xEB] = short_jump;
 }
 
