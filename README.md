@@ -1,8 +1,4 @@
-# x86 Emulator
-## 仕様
-* Intel
-## メモ
-* 命令
-    ```c
-    prefix / opecode / ModR/M / SIB / displacement / imm
-    ```
+# About GEmu
+* A tiny x86 Emulator.
+## spec
+* Under construction...

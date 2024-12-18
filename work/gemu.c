@@ -55,6 +55,12 @@ get_code32(Emulator *emu, int index)
     return ret;
 }
 
+int32_t
+get_sign_code32(Emulator* emu, int index)
+{
+    return (int32_t)get_code32(emu, index);
+}
+
 void
 mov_r32_imm32(Emulator *emu)
 {
@@ -71,6 +77,12 @@ short_jump(Emulator *emu)
     emu->eip += (diff + 2);
 }
 
+void near_jump(Emulator* emu)
+{
+    int32_t diff = get_sign_code32(emu, 1);
+    emu->eip += (diff + 5);
+}
+
 typedef void instruction_func_t(Emulator*);
 instruction_func_t* instructions[256];
 
@@ -81,6 +93,13 @@ init_instructions(void)
     for(int i = 0; i < 8; i++)
         instructions[0xB8 + i] = mov_r32_imm32;
     instructions[0xEB] = short_jump;
+    instructions[0xE9] = near_jump;
+}
+
+void
+assert_code(uint8_t code)
+{
+    printf("\n\nNot Implemented: %x\n", code);
 }
 
 int
@@ -90,11 +109,11 @@ main(int argc, char* argv[])
     Emulator *gemu;
 
     /* Create an emulator */
-    gemu = create_emu(MEM_SIZE, 0x0000, 0x7c00);
+    gemu = create_emu(MEM_SIZE, 0x7c00, 0x7c00);
 
     /* fetch instructions */
     binary = fopen(argv[1], "rb");
-    fread(gemu->memory, 1, 0x200, binary);  // 1 * 0x200 bytes
+    fread(gemu->memory + 0x7c00, 1, 0x200, binary);  // 1 * 0x200 bytes
     fclose(binary);
 
     init_instructions();
@@ -102,7 +121,10 @@ main(int argc, char* argv[])
     while(gemu->eip < MEM_SIZE) {
         uint8_t code = get_code8(gemu, 0);
         printf("EIP = %x, Code = %02x\n", gemu->eip, code);
-        if(instructions[code] == NULL) printf("\n\nNot Implemented: %x\n", code);
+        if(instructions[code] == NULL) {
+            assert_code(code);
+            break;
+        }
 
         instructions[code](gemu);
 

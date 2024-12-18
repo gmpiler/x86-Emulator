@@ -1,4 +1,4 @@
-TARGET=test0
+TARGET=test1
 
 CC = gcc
 LD = ld

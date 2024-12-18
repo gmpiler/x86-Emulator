@@ -1,4 +1,4 @@
 BITS 32
 start:
-    mov eax, 41
+    mov eax, 120
     jmp short start
