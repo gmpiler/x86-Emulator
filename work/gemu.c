@@ -3,8 +3,24 @@
 #include <string.h>
 #include <stdint.h>
 #include "gemu.h"
+#include "gemu_functions.h"
+#include "instructions.h"
 
 #define MEM_SIZE (1024 * 1024)
+
+static void
+read_binary(Emulator *emu, const char *filename)
+{
+    FILE *binary;
+
+    binary = fopen(filename, "rb");
+    if (binary == NULL) {
+        printf("[!] cannot open the file %s.\n", filename);
+        exit(1);
+    }
+    fread(emu->memory + 0x7c00, 1, 0x200, binary);
+    fclose(binary);
+}
 
 static Emulator*
 create_emu(size_t size, uint32_t eip, uint32_t esp)
@@ -34,68 +50,6 @@ dump_registers(Emulator *emu)
     printf("EIP = %08x\n", emu->eip);
 }
 
-uint32_t
-get_code8(Emulator *emu, int index)
-{
-    return emu->memory[emu->eip + index];
-}
-
-int32_t
-get_sign_code8(Emulator *emu, int index)
-{
-    return (int8_t)emu->memory[emu->eip + index];
-}
-
-uint32_t
-get_code32(Emulator *emu, int index)
-{
-    uint32_t ret = 0;
-    for(int i = 0; i < 4; i++)
-        ret |= get_code8(emu, index + i) << (i * 8);
-    return ret;
-}
-
-int32_t
-get_sign_code32(Emulator* emu, int index)
-{
-    return (int32_t)get_code32(emu, index);
-}
-
-void
-mov_r32_imm32(Emulator *emu)
-{
-    uint8_t reg = get_code8(emu, 0) - 0xB8;
-    uint32_t value = get_code32(emu, 1);
-    emu->registers[reg] = value;
-    emu->eip += 5;
-}
-
-void
-short_jump(Emulator *emu)
-{
-    int8_t diff = get_sign_code8(emu, 1);
-    emu->eip += (diff + 2);
-}
-
-void near_jump(Emulator* emu)
-{
-    int32_t diff = get_sign_code32(emu, 1);
-    emu->eip += (diff + 5);
-}
-
-typedef void instruction_func_t(Emulator*);
-instruction_func_t* instructions[256];
-
-void
-init_instructions(void)
-{
-    memset(instructions, 0, sizeof(instructions));
-    for(int i = 0; i < 8; i++)
-        instructions[0xB8 + i] = mov_r32_imm32;
-    instructions[0xEB] = short_jump;
-    instructions[0xE9] = near_jump;
-}
-
 void
 assert_code(uint8_t code)
 {
@@ -105,18 +59,14 @@ assert_code(uint8_t code)
 int
 main(int argc, char* argv[])
 {
-    FILE *binary;
     Emulator *gemu;
+    init_instructions();
 
     /* Create an emulator */
     gemu = create_emu(MEM_SIZE, 0x7c00, 0x7c00);
 
     /* fetch instructions */
-    binary = fopen(argv[1], "rb");
-    fread(gemu->memory + 0x7c00, 1, 0x200, binary);  // 1 * 0x200 bytes
-    fclose(binary);
-
-    init_instructions();
+    read_binary(gemu, argv[1]);
 
     while(gemu->eip < MEM_SIZE) {
         uint8_t code = get_code8(gemu, 0);
