@@ -8,7 +8,7 @@
 #include "instructions.h"
 
 #define MEM_SIZE (1024 * 1024)
-char *registers_name[] = { "EAX", "EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI" };
+char *registers_name[] = { "EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI" };
 
 static void
 read_binary(Emulator *emu, const char *filename)
