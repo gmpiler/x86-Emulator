@@ -1,4 +1,4 @@
-TARGET=test3
+TARGET=test2
 
 CC = gcc
 LD = ld
@@ -13,3 +13,10 @@ all:
 
 disasm:
 	ndisasm -b 32 ${TARGET}
+
+clean:
+	-find | grep -v Makefile | grep -v README.md | \
+	grep -v test0.asm | \
+	grep -v test1.asm | \
+	grep -v test2.asm | \
+	xargs rm -frv

@@ -1,4 +1,5 @@
-    BITS 32
+; modrm test
+BITS 32
     org 0x7c00
     sub esp, 16
     mov ebp, esp
