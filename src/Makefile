@@ -1,15 +1,20 @@
-TARGET=test2
+TARGET=test5_2
 
 CC = gcc
 LD = ld
 AS = nasm
 CFLAGS += -nostdlib -fno-asynchronous-unwind-tables -g -fno-stack-protector
-LDFLAGS += --entry=func -m elf_i386 --oformat=binary
+LDFLAGS += --entry=start --oformat=binary -m elf_i386
 
 all:
-# gcc -c -o ${TARGET}.o ${TARGET}.asm $(CFLAGS) -m32 -fno-pie
-# ld $(LDFLAGS) ${TARGET}.o -m elf_i386 --oformat=binary
+# asmファイルのコンパイル用
 	${AS} -f bin ${TARGET}.asm
+
+c:
+# cファイルのコンパイル用
+	gcc -c ${TARGET}.c $(CFLAGS) -m32 -fno-pie -o ${TARGET}.o
+	${AS} -f elf crt0.asm -o crt0.o
+	${LD} ${LDFLAGS} -Ttext 0x7c00 ${TARGET}.o crt0.o -o ${TARGET}
 
 disasm:
 	ndisasm -b 32 ${TARGET}

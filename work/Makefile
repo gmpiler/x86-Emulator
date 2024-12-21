@@ -1,4 +1,4 @@
-TEST=test2
+TEST=test5_2
 
 CC = gcc
 CFLAGS += -Wall
