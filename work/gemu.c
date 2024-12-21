@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+
 #include "gemu.h"
 #include "gemu_functions.h"
 #include "instructions.h"
 
 #define MEM_SIZE (1024 * 1024)
+char *registers_name[] = { "EAX", "EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI" };
 
 static void
 read_binary(Emulator *emu, const char *filename)

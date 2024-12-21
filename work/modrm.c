@@ -53,7 +53,7 @@ calc_memory_address(Emulator *emu, ModRM *modrm)
             return get_register32(emu, modrm->rm);
         }
     } else if(modrm->mod == 1) {
-        if (modrm->mod == 1) {
+        if (modrm->mod == 4) {
             printf("[!] Not Implemented ModRM mod = 1, rm = 4\n");
             exit(0);
         } else {

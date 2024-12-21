@@ -4,8 +4,6 @@
 
 enum Register { EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI, REGISTERS_COUNT };
 
-char *registers_name[] = { "EAX", "EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI" };
-
 typedef struct {
     uint32_t registers[REGISTERS_COUNT];
     uint32_t eflags;

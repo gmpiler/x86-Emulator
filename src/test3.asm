@@ -1,4 +1,4 @@
-BITS 32
+    BITS 32
     org 0x7c00
     sub esp, 16
     mov ebp, esp
@@ -9,3 +9,5 @@ BITS 32
     inc dword [ebp+4]
     mov edi, [ebp+4]
     jmp 0
+
+    

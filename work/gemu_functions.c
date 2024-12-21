@@ -56,7 +56,7 @@ set_memory32(Emulator *emu, uint32_t address, uint32_t value)
         set_memory8(emu, address + i, value >> (i * 8));
 }
 
-int32_t
+uint32_t
 get_register32(Emulator *emu, int index)
 {
     return emu->registers[index];
