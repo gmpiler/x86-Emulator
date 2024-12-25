@@ -1,4 +1,4 @@
-TARGET=test6
+TARGET=test7
 
 CC = gcc
 LD = ld
@@ -27,4 +27,6 @@ clean:
 	grep -v test3.asm | \
 	grep -v test4.c | \
 	grep -v test5.c | \
+	grep -v test6.c | \
+	grep -v test7.c | \
 	xargs rm -frv
