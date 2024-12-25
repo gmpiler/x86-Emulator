@@ -195,6 +195,21 @@ leave(Emulator *emu)
     emu->eip += 1;
 }
 
+static void
+prefix_ext_opcode_to_16bit(Emulator *emu)
+{
+    emu->eip += 1;
+    uint8_t extended_code = get_code8(emu, 0);
+    printf(">> 16bit Code: %02x\n", extended_code);
+    instructions[extended_code](emu);
+}
+
+static void
+nop(Emulator *emu)
+{
+    emu->eip += 1;
+}
+
 void
 init_instructions(void)
 {
@@ -204,11 +219,13 @@ init_instructions(void)
         instructions[0x50 + i] = push_r32;
     for(int i = 0; i < 8; i++)
         instructions[0x58 + i] = pop_r32;
+    instructions[0x66] = prefix_ext_opcode_to_16bit;
     instructions[0x68] = push_imm32;
     instructions[0x6A] = push_imm8;
     instructions[0x83] = code_83;
     instructions[0x89] = mov_rm32_r32;
     instructions[0x8B] = mov_r32_rm32;
+    instructions[0x90] = nop;
     for(int i = 0; i < 8; i++)
         instructions[0xB8 + i] = mov_r32_imm32;
     instructions[0xC3] = ret;

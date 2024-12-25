@@ -70,7 +70,7 @@ main(int argc, char* argv[])
     /* fetch instructions */
     read_binary(gemu, argv[1]);
 
-    while(gemu->eip < MEM_SIZE) {
+    while(gemu->eip <= MEM_SIZE) {
         uint8_t code = get_code8(gemu, 0);
         printf("EIP = %x, Code = %02x\n", gemu->eip, code);
         if(instructions[code] == NULL) {
@@ -82,6 +82,9 @@ main(int argc, char* argv[])
 
         if(gemu->eip == 0x00) break;
     }
+
+    if(gemu->eip > MEM_SIZE) printf("[!] Segmentation fault: accessed out of memory\n");
+    printf("stop pc = %02x\n\n", gemu->eip);
 
     dump_registers(gemu);
     free_emu(gemu);

@@ -1,0 +1,37 @@
+{
+    // IntelliSense を使用して利用可能な属性を学べます。
+    // 既存の属性の説明をホバーして表示します。
+    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "G - Emulator",
+            "type": "cppdbg",
+            "request": "launch",
+            //mmpの場所
+            "program": "/home/sota0147/x86-Emulator/work/gemu",
+            //引数．オプションなどを都度変更
+            "args": [
+                "/home/sota0147/x86-Emulator/src/test4",
+            ],
+            "stopAtEntry": false,
+            "cwd": "/home/sota0147/x86-Emulator/work", //カレントリワーキングディレクトリ
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

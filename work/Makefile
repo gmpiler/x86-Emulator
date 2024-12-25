@@ -1,7 +1,8 @@
-TEST=test5_2
+TEST=test5
 
 CC = gcc
 CFLAGS += -Wall
+CFLAGS += -g
 
 LD = ld
 

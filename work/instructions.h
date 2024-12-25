@@ -10,10 +10,10 @@ extern instruction_func_t *instructions[256];
 void
 init_instructions(void);
 
-void
+static void
 short_jump(Emulator *emu);
 
-void
+static void
 near_jump(Emulator* emu);
 
 #endif
