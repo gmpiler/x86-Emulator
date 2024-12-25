@@ -100,7 +100,7 @@ sub_rm32_imm8(Emulator *emu, ModRM* modrm)
 static void
 cmp_rm32_imm8(Emulator* emu, ModRM *modrm)
 {
-    uint32_t rm32 = get_rm32(emu, &modrm);
+    uint32_t rm32 = get_rm32(emu, modrm);
     uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
     emu->eip += 1;
     uint64_t result = (uint64_t)rm32 - (uint64_t)imm8;
@@ -239,25 +239,51 @@ DEFINE_JX(o, is_overflow)
 
 #undef DEFINE_JX
 
-static void jl(Emulator* emu)
+static void
+jl(Emulator* emu)
 {
     int diff = (is_sign(emu) != is_overflow(emu)) ? get_sign_code8(emu, 1) : 0;
     emu->eip += (diff + 2);
 }
 
-static void jle(Emulator* emu)
+static void
+jle(Emulator* emu)
 {
     int diff = (is_zero(emu) || (is_sign(emu) != is_overflow(emu))) ? get_sign_code8(emu, 1) : 0;
     emu->eip += (diff + 2);
 }
 
 static void
-prefix_ext_opcode_to_16bit(Emulator *emu)
+jng(Emulator *emu)
+{
+    int diff = (is_zero(emu) || (is_sign(emu) != is_overflow(emu))) ? get_sign_code32(emu, 1) : 0;
+    emu->eip += (diff + 5);
+}
+
+/* prefixの次の1バイトがopcodeとなる */
+static void
+prefix_ext_opcode_to_2bytes(Emulator *emu)
 {
     emu->eip += 1;
     uint8_t extended_code = get_code8(emu, 0);
     printf(">> 16bit Code: %02x\n", extended_code);
     instructions[extended_code](emu);
+}
+
+/* prefixの次の2バイトがopcodeとなる(Primary + Secondary opcode) */
+static void
+prefix_ext_opcode_to_3bytes(Emulator *emu)
+{
+    emu->eip += 1;
+    uint8_t primary_code = get_code8(emu, 0);
+    switch(primary_code) {
+        case 0x8E:  // jng cw/cd
+            jng(emu);
+            break;
+        default:
+            printf("[!] Not implemented 0x0F + %02x\n", primary_code);
+            exit(1);
+    }
 }
 
 static void
@@ -271,6 +297,7 @@ init_instructions(void)
 {
     memset(instructions, 0, sizeof(instructions));
     instructions[0x01] = add_rm32_r32;
+    instructions[0x0F] = prefix_ext_opcode_to_3bytes;
 
     instructions[0x3B] = cmp_r32_rm32;
 
@@ -279,7 +306,7 @@ init_instructions(void)
     for(int i = 0; i < 8; i++)
         instructions[0x58 + i] = pop_r32;
 
-    instructions[0x66] = prefix_ext_opcode_to_16bit;
+    instructions[0x66] = prefix_ext_opcode_to_2bytes;
     instructions[0x68] = push_imm32;
     instructions[0x6A] = push_imm8;
 

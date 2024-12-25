@@ -5,17 +5,45 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "G - Emulator",
+            "name": "G - Emulator(lap)",
             "type": "cppdbg",
             "request": "launch",
             //mmpの場所
             "program": "/home/sota0147/x86-Emulator/work/gemu",
             //引数．オプションなどを都度変更
             "args": [
-                "/home/sota0147/x86-Emulator/src/test4",
+                "/home/sota0147/x86-Emulator/src/testkernel",
             ],
             "stopAtEntry": false,
             "cwd": "/home/sota0147/x86-Emulator/work", //カレントリワーキングディレクトリ
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },{
+            "name": "G - Emulator(Desk)",
+            "type": "cppdbg",
+            "request": "launch",
+            //mmpの場所
+            "program": "/root/x86-Emulator/work/gemu",
+            //引数．オプションなどを都度変更
+            "args": [
+                "/root/x86-Emulator/src/testkernel",
+            ],
+            "stopAtEntry": false,
+            "cwd": "/root/x86-Emulator/work", //カレントリワーキングディレクトリ
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

@@ -6,6 +6,10 @@
 #include "modrm.h"
 #include "gemu.h"
 
+#if 0
+#define DEBUG
+#endif
+
 /**
     @attention parse_modrm呼び出し時には，eipがMod R/Mを指している
     @return    次の命令のprefix or opecode
@@ -22,6 +26,10 @@ parse_modrm(Emulator *emu, ModRM *modrm)
     modrm->mod      = ((code & 0xC0) >> 6);
     modrm->opecode  = ((code & 0x38) >> 3);
     modrm->rm       = code & 0x07;
+
+#ifdef DEBUG
+    printf("parsed modrm: %02x/%02x/%02x\n", modrm->mod, modrm->opecode, modrm->rm);
+#endif
 
     emu->eip += 1;
 

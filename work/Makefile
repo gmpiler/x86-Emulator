@@ -1,4 +1,4 @@
-TEST=test7
+TEST=testkernel
 
 CC = gcc
 CFLAGS += -Wall

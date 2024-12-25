@@ -1,4 +1,4 @@
-TARGET=test7
+TARGET=testkernel
 
 CC = gcc
 LD = ld
@@ -15,6 +15,7 @@ c:
 	gcc -c ${TARGET}.c $(CFLAGS) -m32 -fno-pie -o ${TARGET}.o
 	${AS} -f elf crt0.asm -o crt0.o
 	${LD} ${LDFLAGS} -Ttext 0x7c00 crt0.o ${TARGET}.o -o ${TARGET}
+	ndisasm -b 32 ${TARGET} > ${TARGET}.dump
 
 disasm:
 	ndisasm -b 32 ${TARGET}

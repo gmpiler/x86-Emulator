@@ -1,0 +1,24 @@
+00000000  E82B000000        call 0x30
+00000005  E9F683FFFF        jmp 0xffff8400
+0000000A  55                push ebp
+0000000B  89E5              mov ebp,esp
+0000000D  83EC10            sub esp,byte +0x10
+00000010  C745FC00000000    mov dword [ebp-0x4],0x0
+00000017  EB0A              jmp short 0x23
+00000019  8B4508            mov eax,[ebp+0x8]
+0000001C  0145FC            add [ebp-0x4],eax
+0000001F  83450801          add dword [ebp+0x8],byte +0x1
+00000023  8B4508            mov eax,[ebp+0x8]
+00000026  3B450C            cmp eax,[ebp+0xc]
+00000029  7EEE              jng 0x19
+0000002B  8B45FC            mov eax,[ebp-0x4]
+0000002E  C9                leave
+0000002F  C3                ret
+00000030  55                push ebp
+00000031  89E5              mov ebp,esp
+00000033  6A0A              push byte +0xa
+00000035  6A01              push byte +0x1
+00000037  E8CEFFFFFF        call 0xa
+0000003C  83C408            add esp,byte +0x8
+0000003F  C9                leave
+00000040  C3                ret
