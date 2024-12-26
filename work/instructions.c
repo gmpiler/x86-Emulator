@@ -109,6 +109,25 @@ imul_rm32_imm8(Emulator *emu, ModRM *modrm)
 }
 
 static void
+shift_left(Emulator *emu)
+{
+    emu->eip += 1;
+    ModRM modrm;
+    parse_modrm(emu, &modrm);
+    switch(modrm.opecode) {
+        case 4:
+            uint32_t rm32 = get_rm32(emu, &modrm);
+            uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
+            emu->eip += 1;
+            set_rm32(emu, &modrm, rm32 << imm8);
+            break;
+        default:
+            printf("[!] Not implemented shift opecode %02x\n", modrm.opecode);
+            exit(1);
+    }
+}
+
+static void
 cmp_rm32_imm8(Emulator* emu, ModRM *modrm)
 {
     uint32_t rm32 = get_rm32(emu, modrm);
@@ -362,6 +381,7 @@ init_instructions(void)
     for(int i = 0; i < 8; i++)
         instructions[0xB8 + i] = mov_r32_imm32;
 
+    instructions[0xC1] = shift_left;
     instructions[0xC3] = ret;
     instructions[0xC7] = mov_rm32_imm32;
     instructions[0xC9] = leave;

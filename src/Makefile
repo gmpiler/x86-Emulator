@@ -30,4 +30,5 @@ clean:
 	grep -v test5.c | \
 	grep -v test6.c | \
 	grep -v test7.c | \
+	grep -v test_mul_shift.asm | \
 	xargs rm -frv

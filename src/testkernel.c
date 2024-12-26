@@ -6,9 +6,9 @@
 #define NCOUT 128
 
 #define N 10
-float in[OH][OW][NCIN];
-float w[KH][KW][NCIN][NCOUT];
-float out[OH][OW][NCOUT];
+int in[OH][OW][NCIN];
+int w[KH][KW][NCIN][NCOUT];
+int out[OH][OW][NCOUT];
 
 int main(void)
 {
@@ -25,9 +25,9 @@ int main(void)
                 for(kw = 0; kw < KW; kw++) {
                     for(ncin = 0; ncin < NCIN; ncin++) {
                         for(ncout = 0; ncout < NCOUT; ncout++) {
-                            in[oh][ow][ncin] = 3.0f;
-                            w[kh][kw][ncin][ncout] = 7.0f;
-                            out[oh][ow][ncout] = 0.0f;
+                            in[oh][ow][ncin] = 3;
+                            w[kh][kw][ncin][ncout] = 7;
+                            out[oh][ow][ncout] = 0;
                         }
                     }
                 }
