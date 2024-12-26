@@ -36,6 +36,8 @@ parse_modrm(Emulator *emu, ModRM *modrm)
     if(modrm->mod != 3 && modrm->rm == 4) {
         modrm->sib = get_code8(emu, 0);
         emu->eip += 1;
+    } else {
+        modrm->sib = 0;
     }
 
     if((modrm->mod == 0 && modrm->rm == 5) || modrm->mod == 2){
@@ -45,6 +47,21 @@ parse_modrm(Emulator *emu, ModRM *modrm)
         modrm->disp8 = get_sign_code8(emu, 0);
         emu->eip += 1;
     }
+}
+
+/* SIBバイトを読み進める */
+void
+parse_sib(Emulator *emu, SIB *sib, ModRM *modrm)
+{
+    uint8_t code;
+    assert(emu != NULL && sib != NULL);
+
+    memset(sib, 0, sizeof(SIB));
+
+    code = (uint8_t)modrm->sib;
+    sib->scale      = ((code & 0xC0) >> 6);
+    sib->index      = ((code & 0x38) >> 3);
+    sib->base       = code & 0x07;
 }
 
 /* @attention SIB対応 */

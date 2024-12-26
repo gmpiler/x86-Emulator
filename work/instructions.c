@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 #include "instructions.h"
 #include "gemu.h"
 #include "gemu_functions.h"
@@ -40,9 +41,43 @@ mov_rm32_imm32(Emulator *emu)
     emu->eip += 1;
     ModRM modrm;
     parse_modrm(emu, &modrm);
-    uint32_t value = get_code32(emu, 0);
-    emu->eip += 4;
-    set_rm32(emu, &modrm, value);
+    if(modrm.sib == 0) {
+        uint32_t value = get_code32(emu, 0);
+        emu->eip += 4;
+        set_rm32(emu, &modrm, value);
+    } else {
+        SIB sib;
+        parse_sib(emu, &sib, &modrm);
+        if(sib.base == 5) {
+            uint32_t scale;
+            switch(sib.scale) {
+                case 0:
+                    scale = 1;
+                    break;
+                case 1:
+                    scale = 2;
+                    break;
+                case 2:
+                    scale = 4;
+                    break;
+                case 3:
+                    scale = 8;
+                    break;
+                default:
+                    printf("[!] wrong sib scale\n");
+                    exit(1);
+            }
+            uint32_t index  = get_register32(emu, sib.index);
+            uint32_t base   = get_code32(emu, 0);
+            uint32_t value  = get_code32(emu, 4);
+            emu->memory[index * scale + base] = value;
+            assert(modrm.mod != 3); // レジスタ以外を期待
+            emu->eip += 8;
+        } else {
+            printf("[!] Not implemented sib base %02x\n", sib.base);
+            exit(1);
+        }
+    }
 }
 
 static void
@@ -116,11 +151,13 @@ shift_left(Emulator *emu)
     parse_modrm(emu, &modrm);
     switch(modrm.opecode) {
         case 4:
+        {
             uint32_t rm32 = get_rm32(emu, &modrm);
             uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
             emu->eip += 1;
             set_rm32(emu, &modrm, rm32 << imm8);
             break;
+        }
         default:
             printf("[!] Not implemented shift opecode %02x\n", modrm.opecode);
             exit(1);
