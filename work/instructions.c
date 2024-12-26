@@ -98,6 +98,17 @@ sub_rm32_imm8(Emulator *emu, ModRM* modrm)
 }
 
 static void
+imul_rm32_imm8(Emulator *emu, ModRM *modrm)
+{
+    uint32_t rm32 = get_rm32(emu, modrm);     // R/Mで指定するレジスタ(Src)
+    uint32_t imm8 = (int32_t)get_sign_code8(emu, 0);
+    emu->eip += 1;
+    uint64_t result = (uint64_t)rm32 * (uint64_t)imm8;
+    set_r32(emu, modrm, result);   // REGで指定するレジスタに書き込む
+    update_eflags_sub(emu, rm32, imm8, result);
+}
+
+static void
 cmp_rm32_imm8(Emulator* emu, ModRM *modrm)
 {
     uint32_t rm32 = get_rm32(emu, modrm);
@@ -128,6 +139,26 @@ code_83(Emulator *emu)
             printf("[!] Not Implemented: 83% /%d\n", modrm.opecode);
             exit(1);
     }
+}
+
+/* imul専用．アドレッシングモードの指定を全てget/set_rm関数が担うのであれば，imul_rm32_imm8に統合可 */
+static void
+code_6b(Emulator *emu)
+{
+    emu->eip += 1;
+    ModRM modrm;
+    parse_modrm(emu, &modrm);
+
+    switch(modrm.mod) {
+        case 3: // 0x11(modが3の時はr/mがレジスタ)
+            imul_rm32_imm8(emu, &modrm);
+            break;
+        default:
+            printf("[!] Not implemented mod %02x (imul memory access)\n", modrm.mod);
+            exit(1);
+            break;
+    }
+
 }
 
 static void
@@ -309,6 +340,7 @@ init_instructions(void)
     instructions[0x66] = prefix_ext_opcode_to_2bytes;
     instructions[0x68] = push_imm32;
     instructions[0x6A] = push_imm8;
+    instructions[0x6B] = code_6b;
 
     instructions[0x70] = jo;
     instructions[0x71] = jno;
