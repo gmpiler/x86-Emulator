@@ -4,6 +4,11 @@
   * **Prefix**:       0xf0, 0xf2, 0xf3, 0x26, 0x2e, 0x36, 0x3e, 0x64-67のいずれか
   * **ModR/M**:       レジスタ・アドレッシングモードの指定，オペランドの拡張に用いる
   * **SIB**:          複雑なアドレス計算に用いる．(例: [eax + 4*ecx + 123])
+    * ss/iii/bbbな構造をとる
+      * [scale * index(reg) + base]で計算．
+      * scaleは0, 2, 4, 8をとり，それぞれ00, 01, 10, 11
+      * indexはそのままレジスタ
+      * baseは000~111をとり，レジスタであったりディスプレースメントと組み合わせたり変わる．
   * **displacement**: アドレスの差分．(例: [ebp - 4]の-4)
     ```c
     prefix | opecode | ModR/M | SIB | displacement | immediate
