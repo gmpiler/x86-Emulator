@@ -1,5 +1,8 @@
 # About GEmu
 * A tiny x86 Emulator.
+## 使い方
+* 基本的にはpull後，workディレクトリでmakeし，make runを実行することで動作を確認できます．
+    * その他テストプロを確認したい場合は，srcにあるテストプロに合わせて，src・workのMakefile中TARGETを変更してください．
 ## spec
 ### 全体 (gemu.c/h)
 * GEmuはレジスタとメモリの状態をエミュレートする．
